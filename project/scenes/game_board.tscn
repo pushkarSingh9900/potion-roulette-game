@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://cqdwf4upwofrw"]
 
-[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_game_manager"]
+[ext_resource type="Script" uid="uid://c3hxgx6dpcfla" path="res://scripts/game_manager.gd" id="1_game_manager"]
 
-[node name="GameBoard" type="Control"]
+[node name="GameBoard" type="Control" unique_id=592950832]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,50 +11,51 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_game_manager")
 
-[node name="PlayerHealth" type="Label" parent="."]
+[node name="PlayerHealth" type="Label" parent="." unique_id=1108722584]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 148.0
+offset_right = 180.0
 offset_bottom = 47.0
 text = "Player HP: 10"
 
-[node name="AIHealth" type="Label" parent="."]
+[node name="AIHealth" type="Label" parent="." unique_id=5745657]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 56.0
-offset_right = 131.0
+offset_right = 150.0
 offset_bottom = 79.0
 text = "Bot HP: 10"
 
-[node name="TurnLabel" type="Label" parent="."]
+[node name="TurnLabel" type="Label" parent="." unique_id=1240785494]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 88.0
-offset_right = 90.0
+offset_right = 240.0
 offset_bottom = 111.0
 text = "Turn: 1"
 
-[node name="ResultLabel" type="Label" parent="."]
+[node name="ResultLabel" type="Label" parent="." unique_id=1402807253]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 128.0
-offset_right = 171.0
-offset_bottom = 151.0
+offset_right = 520.0
+offset_bottom = 248.0
 text = "Choose a potion"
+autowrap_mode = 3
 
-[node name="PotionA" type="Button" parent="."]
+[node name="PotionA" type="Button" parent="." unique_id=1517790957]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 184.0
-offset_right = 124.0
-offset_bottom = 215.0
+offset_top = 280.0
+offset_right = 164.0
+offset_bottom = 311.0
 text = "Potion A"
 
-[node name="PotionB" type="Button" parent="."]
+[node name="PotionB" type="Button" parent="." unique_id=1654271574]
 layout_mode = 0
-offset_left = 136.0
-offset_top = 184.0
-offset_right = 236.0
-offset_bottom = 215.0
+offset_left = 176.0
+offset_top = 280.0
+offset_right = 316.0
+offset_bottom = 311.0
 text = "Potion B"
