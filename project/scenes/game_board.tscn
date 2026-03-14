@@ -1,0 +1,60 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_game_manager"]
+
+[node name="GameBoard" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_game_manager")
+
+[node name="PlayerHealth" type="Label" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 148.0
+offset_bottom = 47.0
+text = "Player HP: 10"
+
+[node name="AIHealth" type="Label" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 131.0
+offset_bottom = 79.0
+text = "Bot HP: 10"
+
+[node name="TurnLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 88.0
+offset_right = 90.0
+offset_bottom = 111.0
+text = "Turn: 1"
+
+[node name="ResultLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 128.0
+offset_right = 171.0
+offset_bottom = 151.0
+text = "Choose a potion"
+
+[node name="PotionA" type="Button" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 184.0
+offset_right = 124.0
+offset_bottom = 215.0
+text = "Potion A"
+
+[node name="PotionB" type="Button" parent="."]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 184.0
+offset_right = 236.0
+offset_bottom = 215.0
+text = "Potion B"
