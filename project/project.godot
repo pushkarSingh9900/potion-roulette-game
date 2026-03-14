@@ -21,6 +21,13 @@ GameRules="*res://scripts/game_rules.gd"
 VfxManager="*res://scripts/vfx_manager.gd"
 AudioManager="*res://scripts/audio_manager.gd"
 
+[display]
+
+window/size/viewport_width=1440
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 
 [physics]
 

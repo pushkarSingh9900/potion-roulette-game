@@ -1,91 +1,109 @@
 extends Node
 
-# Procedural Audio Manager for testing without actual assets
-@onready var bgm_player = AudioStreamPlayer.new()
-@onready var heartbeat_player = AudioStreamPlayer.new()
+const MENU_MUSIC_PATH := "res://assets/sprites/music/menu.mp3"
+const GAME_MUSIC_PATH := "res://assets/sprites/music/ongoing.mp3"
+const SFX_PATHS := {
+	"ui": "res://assets/sprites/music/paper.mp3",
+	"card_add": "res://assets/sprites/music/pop.mp3",
+	"card_remove": "res://assets/sprites/music/paper.mp3",
+	"confirm": "res://assets/sprites/music/stab.mp3",
+	"resolve": "res://assets/sprites/music/thud.mp3",
+	"result": "res://assets/sprites/music/faaah.mp3",
+}
 
-var playback: AudioStreamGeneratorPlayback
-var sample_hz = 44100.0
+@onready var bgm_player := AudioStreamPlayer.new()
 
-func _ready():
+var current_bgm_key := ""
+var stream_cache: Dictionary = {}
+
+
+func _ready() -> void:
 	add_child(bgm_player)
-	bgm_player.volume_db = -10.0
-	
-	add_child(heartbeat_player)
-	heartbeat_player.volume_db = 5.0
-	
-	# Setup a generic procedural generator for SFX
-	var generator = AudioStreamGenerator.new()
-	generator.mix_rate = sample_hz
-	
-func play_sfx(stream_name: String, pitch_variance: float = 0.1):
-	var player = AudioStreamPlayer.new()
-	add_child(player)
-	
-	# Procedural sound generation based on type
-	var stream = AudioStreamGenerator.new()
-	stream.mix_rate = sample_hz
-	stream.buffer_length = 0.5 # 0.5 second buffer
-	player.stream = stream
+	bgm_player.volume_db = -13.0
+	bgm_player.bus = "Master"
+
+
+func play_menu_music() -> void:
+	_play_bgm("menu", _load_mp3_stream(MENU_MUSIC_PATH), -11.0)
+
+
+func play_game_music() -> void:
+	_play_bgm("game", _load_mp3_stream(GAME_MUSIC_PATH), -15.0)
+
+
+func play_bgm() -> void:
+	play_game_music()
+
+
+func play_sfx(stream_name: String, pitch_variance: float = 0.04) -> void:
+	var source := _load_mp3_stream(str(SFX_PATHS.get(stream_name, "")))
+	if source == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = source
+	player.bus = "Master"
+	player.volume_db = _sfx_volume_db(stream_name)
 	player.pitch_scale = randf_range(1.0 - pitch_variance, 1.0 + pitch_variance)
+	add_child(player)
 	player.play()
-	
-	var pb = player.get_stream_playback()
-	_fill_buffer_procedural(pb, stream_name)
-	
-	# Cleanup
-	await get_tree().create_timer(0.6).timeout
-	player.queue_free()
+	player.finished.connect(player.queue_free)
 
-func _fill_buffer_procedural(pb: AudioStreamGeneratorPlayback, type: String):
-	var frames_available = pb.get_frames_available()
-	var phase = 0.0
-	
-	for i in range(frames_available):
-		var val = 0.0
-		var time = float(i) / sample_hz
-		
-		match type:
-			"glass_clink":
-				# High click, fast decay
-				val = sin(time * 2000.0 * PI * 2.0) * exp(-time * 50.0)
-			"flesh_impact":
-				# Low thud, fast decay
-				val = sin(time * 100.0 * PI * 2.0) * exp(-time * 20.0)
-			"ethereal_chime":
-				# Medium tone, slow decay
-				val = sin(time * 600.0 * PI * 2.0) * exp(-time * 5.0)
-			"poison_hiss":
-				# White noise with decay
-				val = randf_range(-1.0, 1.0) * exp(-time * 10.0)
-			"wheel_start":
-				# Mechanical click sequence
-				val = sin(time * 400.0 * PI * 2.0) * exp(-time * 30.0) * (1.0 if int(time * 10) % 2 == 0 else 0.0)
-		
-		# Prevent horrific clipping
-		val = clamp(val, -1.0, 1.0)
-		pb.push_frame(Vector2(val, val))
 
-func set_heartbeat_active(active: bool):
-	if active and not heartbeat_player.playing:
-		var stream = AudioStreamGenerator.new()
-		stream.mix_rate = sample_hz
-		stream.buffer_length = 1.0
-		heartbeat_player.stream = stream
-		heartbeat_player.play()
-		
-		var pb = heartbeat_player.get_stream_playback()
-		# Simple repeating thump
-		var frames = pb.get_frames_available()
-		for i in range(frames):
-			var time = float(i) / sample_hz
-			# Thump thump ... wait ... thump thump
-			var thump_env = clamp(sin(time * PI * 2.0), 0.0, 1.0) * exp(-fmod(time, 1.0) * 5.0)
-			var val = sin(time * 60.0 * PI * 2.0) * thump_env
-			pb.push_frame(Vector2(val, val))
-			
-	elif not active and heartbeat_player.playing:
-		heartbeat_player.stop()
-
-func play_bgm():
+func set_heartbeat_active(active: bool) -> void:
 	pass
+
+
+func stop_music() -> void:
+	bgm_player.stop()
+	current_bgm_key = ""
+
+
+func _play_bgm(track_key: String, stream: AudioStream, volume_db: float) -> void:
+	if stream == null:
+		return
+	if current_bgm_key == track_key and bgm_player.playing:
+		return
+
+	current_bgm_key = track_key
+	bgm_player.volume_db = volume_db
+	bgm_player.stream = _duplicate_looped_stream(stream)
+	bgm_player.play()
+
+
+func _duplicate_looped_stream(stream: AudioStream) -> AudioStream:
+	var duplicate_stream := stream.duplicate(true)
+	if duplicate_stream is AudioStreamMP3:
+		duplicate_stream.loop = true
+	return duplicate_stream
+
+
+func _load_mp3_stream(path: String) -> AudioStreamMP3:
+	if path.is_empty():
+		return null
+	if stream_cache.has(path):
+		return stream_cache[path]
+
+	var bytes := FileAccess.get_file_as_bytes(ProjectSettings.globalize_path(path))
+	if bytes.is_empty():
+		return null
+
+	var stream := AudioStreamMP3.new()
+	stream.data = bytes
+	stream_cache[path] = stream
+	return stream
+
+
+func _sfx_volume_db(stream_name: String) -> float:
+	match stream_name:
+		"card_add":
+			return -9.0
+		"card_remove":
+			return -12.0
+		"confirm":
+			return -11.0
+		"resolve":
+			return -8.0
+		"result":
+			return -10.0
+	return -12.0
