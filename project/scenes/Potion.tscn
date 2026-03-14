@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8y8y8y8y8y8y"]
+
+[ext_resource type="Script" path="res://scripts/potion_ui.gd" id="1_potui"]
+[ext_resource type="Script" path="res://scripts/potion_slot.gd" id="2_potslot"]
+
+[node name="Potion" type="Control"]
+custom_minimum_size = Vector2(120, 160)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 120.0
+offset_bottom = 160.0
+script = ExtResource("1_potui")
+
+[node name="BottleSprite" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.1, 0.2, 1)
+
+[node name="CardSlots" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Slot1" type="Control" parent="CardSlots"]
+custom_minimum_size = Vector2(40, 60)
+layout_mode = 2
+script = ExtResource("2_potslot")
+
+[node name="Slot2" type="Control" parent="CardSlots"]
+custom_minimum_size = Vector2(40, 60)
+layout_mode = 2
+script = ExtResource("2_potslot")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "POTION"
+horizontal_alignment = 1

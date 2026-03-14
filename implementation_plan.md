@@ -83,6 +83,23 @@ COIN_TOSS → DRAW_CARD → CRAFT_POTIONS → OPPONENT_CHOOSE
 
 ---
 
+#### [COMMANDS] Account Switch Sequence
+
+Run these commands in your Git Bash or terminal:
+
+```bash
+# 1. Update identity locally for this project
+git config user.name "YOUR_TARGET_USERNAME"
+git config user.email "YOUR_TARGET_EMAIL"
+
+# 2. Erase cached Windows credentials for GitHub
+# This forces a new login prompt on the next step
+echo "url=https://github.com" | git credential-manager-core erase
+
+# 3. Push to trigger the login window
+git push origin main
+```
+
 ## Verification Plan
 
 ### Automated
@@ -90,6 +107,11 @@ COIN_TOSS → DRAW_CARD → CRAFT_POTIONS → OPPONENT_CHOOSE
 - Validate Lingering Poison resolves and clears correctly
 - Validate Shield absorb + expiry
 - Validate Chaos Wheel each outcome
+- Validate card draw, hand size, exhaustion
+
+### Manual Verification
+- Run `git config user.name` and `git config user.email` to verify the identity.
+- Successfully run `git push origin main` and confirm the commits appear on GitHub.
 - Validate card draw, hand size, exhaustion
 
 ### Manual
