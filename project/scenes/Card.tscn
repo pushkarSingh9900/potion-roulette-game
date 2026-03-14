@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://b7v7x8x8x8x8x"]
+[gd_scene format=3 uid="uid://b7v7x8x8x8x8x"]
 
 [ext_resource type="Script" path="res://scripts/card_ui.gd" id="1_x8x8x"]
 
